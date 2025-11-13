@@ -1,0 +1,95 @@
+:root{
+  --bg: hsl(120 8% 8%);
+  --card: hsl(120 8% 10%);
+  --fg: hsl(0 0% 98%);
+  --muted: hsl(0 0% 60%);
+  --border: hsl(120 8% 20%);
+  --online: hsl(142 76% 36%);
+  --offline: hsl(0 84% 60%);
+}
+
+/* Base layout */
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+  padding: 0;
+}
+
+.container-fluid {
+  padding: 1.5rem;
+}
+
+/* Card container */
+.card-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 880px;
+  width: 95%;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+  animation: fade-in 0.5s ease-out both;
+}
+
+/* Header */
+.title-row { align-items:center; display:flex; justify-content:center; }
+.server-icon { font-size:28px; }
+.title { font-size:28px; margin:0; }
+.subtitle { color: var(--muted); margin-top:6px; }
+
+/* Status grid */
+.status-grid { display:flex; gap:1.5rem; flex-wrap:wrap; align-items:center; }
+.status-indicator { display:flex; align-items:center; gap:1rem; min-width:220px; }
+.indicator-circle {
+  width:56px; height:56px; border-radius:50%;
+  background:#888; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  display:inline-block;
+  transition: box-shadow .25s ease, background .25s ease;
+}
+.label { color: var(--muted); font-size:0.9rem; }
+.value { font-size:1.25rem; font-weight:600; }
+
+/* uptime box */
+.uptime-box { min-width:160px; }
+
+/* Players list */
+.players-section .list-group-item,
+.sessions-section .list-group-item,
+.session-card {
+  background: hsl(120 8% 15%);
+  border-radius:8px; border:1px solid var(--border); margin-bottom:8px; padding:10px;
+}
+.player-item { display:flex; align-items:center; gap:0.75rem; }
+.dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.dot.online { background: var(--online); box-shadow: 0 0 20px rgba(46,204,113,0.25); animation: pulse-glow 2s ease-in-out infinite; }
+.player-name { font-weight:600; color: var(--online); }
+
+/* Sessions */
+.session-header { font-size:0.95rem; }
+.session-list { margin-left:10px; margin-top:6px; }
+.session-item { color: var(--muted); font-size:0.9rem; }
+
+/* footer */
+.footer { border-top:1px solid var(--border); padding-top:1rem; margin-top:1rem; color:var(--muted); font-size:0.85rem; }
+
+/* small responsive */
+@media (max-width:700px) {
+  .status-grid { flex-direction:column; }
+  .title { font-size:20px; }
+}
+
+/* animations */
+@keyframes pulse-glow {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.6; transform:scale(1.05); }
+}
+@keyframes fade-in {
+  from { opacity:0; transform:translateY(8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.animate-fade { animation: fade-in 0.5s ease-out both; }
+
+/* muted */
+.muted { color: var(--muted); font-style: italic; }
