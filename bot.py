@@ -9,8 +9,9 @@ from zoneinfo import ZoneInfo
 # === .env laden ===
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
-EXAROTON_API_KEY = os.getenv("EXAROTON_API_KEY")
-SERVER_ID = os.getenv("SERVER_ID")
+PTERO_PANEL_URL = os.getenv("PTERO_PANEL_URL")
+PTERO_API_KEY = os.getenv("PTERO_API_KEY")
+PTERO_SERVER_ID = os.getenv("PTERO_SERVER_ID")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
 # === Discord Setup ===
