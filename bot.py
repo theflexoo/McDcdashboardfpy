@@ -40,34 +40,40 @@ server_status = {
 
 # === API Abfrage ===
 def get_server_status():
-    url = f"{PTERO_PANEL_URL}/api/client/servers/{PTERO_SERVER_ID}/resources"
+    server_url = f"https://<DEINE_PANEL_URL>/api/client/servers/{os.getenv('PTERO_SERVER_ID')}/resources"
     headers = {
-        "Authorization": f"Bearer {PTERO_API_KEY}",
+        "Authorization": f"Bearer {os.getenv('PTERO_API_KEY')}",
         "Accept": "application/json"
     }
-
     try:
-        r = requests.get(url, headers=headers, timeout=5)
-        r.raise_for_status()
-        data = r.json()["attributes"]
+        r = requests.get(server_url, headers=headers, timeout=5)
+        data = r.json()
 
-        state = data["current_state"]  # running, offline, starting, stopping
+        # Status auswerten
+        # Pterodactyl liefert z.B. "current_state": "running" oder "offline"
+        status_str = data["attributes"]["current_state"]  # z.B. "running", "offline"
+        if status_str == "running":
+            status_code = 1
+        elif status_str == "starting":
+            status_code = 2
+        elif status_str == "stopping":
+            status_code = 3
+        elif status_str == "offline":
+            status_code = 0
+        else:
+            status_code = 4  # unknown
 
-        status_map = {
-            "running": 1,
-            "starting": 2,
-            "stopping": 3,
-            "offline": 0
-        }
-
+        # Spieler-/Ressourceninfos können optional hinzugefügt werden
+        # Pterodactyl hat keine "Spielerliste", wenn Minecraft, muss Plugin oder Server-RPC genutzt werden
+        players = []  # leer, falls keine andere API
         return {
-            "status": status_map.get(state, 0),
-            "name": "Minecraft Server",
-            "players": {
-                "list": []  # Pterodactyl liefert keine Spielernamen
-            }
+            "status": status_code,
+            "name": "Superwelt",  # Optional: Name selbst setzen
+            "players": {"list": players}
         }
-
+    except Exception as e:
+        print("Fehler bei Pterodactyl API:", e)
+        return None
     except Exception as e:
         print("❌ Pterodactyl API Fehler:", e)
         return None
