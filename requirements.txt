@@ -4,3 +4,4 @@ requests               # Für API-Abfragen (Exaroton)
 pytz                   # Für Zeit-Zonen Berechnungen (z.B. Berlin/CET)
 python-dotenv==1.0.1
 aiohttp==3.9.5
+pteroapi
