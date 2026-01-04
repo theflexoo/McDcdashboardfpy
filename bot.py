@@ -39,45 +39,28 @@ server_status = {
 }
 
 # === API Abfrage ===
+from pteroapi import PterodactylClient
+
 def get_server_status():
-    server_url = f"https://<DEINE_PANEL_URL>/api/client/servers/{os.getenv('PTERO_SERVER_ID')}/resources"
-    headers = {
-        "Authorization": f"Bearer {os.getenv('PTERO_API_KEY')}",
-        "Accept": "application/json"
-    }
     try:
-        r = requests.get(server_url, headers=headers, timeout=5)
-        data = r.json()
+        client = PterodactylClient(os.getenv("PTERO_API_KEY"), url="https://dein-panel-url.com")
+        server_id = os.getenv("SERVER_ID")
+        server = client.servers.get(server_id)
+        
+        # Status: 0=Offline, 1=Online
+        status_code = 1 if server.attributes['is_suspended'] == False and server.attributes['status'] == 'running' else 0
 
-        # Status auswerten
-        # Pterodactyl liefert z.B. "current_state": "running" oder "offline"
-        status_str = data["attributes"]["current_state"]  # z.B. "running", "offline"
-        if status_str == "running":
-            status_code = 1
-        elif status_str == "starting":
-            status_code = 2
-        elif status_str == "stopping":
-            status_code = 3
-        elif status_str == "offline":
-            status_code = 0
-        else:
-            status_code = 4  # unknown
+        # Spieler: je nach Pterodactyl Mod, z.B. Query oder externer API
+        players = []  # Optional: Spieler-API abrufen, sonst leer lassen
 
-        # Spieler-/Ressourceninfos können optional hinzugefügt werden
-        # Pterodactyl hat keine "Spielerliste", wenn Minecraft, muss Plugin oder Server-RPC genutzt werden
-        players = []  # leer, falls keine andere API
         return {
             "status": status_code,
-            "name": "Superwelt",  # Optional: Name selbst setzen
+            "name": server.attributes['name'],
             "players": {"list": players}
         }
     except Exception as e:
         print("Fehler bei Pterodactyl API:", e)
         return None
-    except Exception as e:
-        print("❌ Pterodactyl API Fehler:", e)
-        return None
-
 # === Discord Events ===
 @client.event
 async def on_ready():
