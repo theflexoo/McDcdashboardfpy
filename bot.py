@@ -40,14 +40,36 @@ server_status = {
 
 # === API Abfrage ===
 def get_server_status():
-    url = f"https://api.exaroton.com/v1/servers/{SERVER_ID}"
-    headers = {"Authorization": f"Bearer {EXAROTON_API_KEY}"}
+    url = f"{PTERO_PANEL_URL}/api/client/servers/{PTERO_SERVER_ID}/resources"
+    headers = {
+        "Authorization": f"Bearer {PTERO_API_KEY}",
+        "Accept": "application/json"
+    }
+
     try:
         r = requests.get(url, headers=headers, timeout=5)
-        data = r.json()
-        return data["data"]
+        r.raise_for_status()
+        data = r.json()["attributes"]
+
+        state = data["current_state"]  # running, offline, starting, stopping
+
+        status_map = {
+            "running": 1,
+            "starting": 2,
+            "stopping": 3,
+            "offline": 0
+        }
+
+        return {
+            "status": status_map.get(state, 0),
+            "name": "Minecraft Server",
+            "players": {
+                "list": []  # Pterodactyl liefert keine Spielernamen
+            }
+        }
+
     except Exception as e:
-        print("Fehler bei API:", e)
+        print("❌ Pterodactyl API Fehler:", e)
         return None
 
 # === Discord Events ===
